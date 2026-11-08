@@ -1,0 +1,29 @@
+(선택 · 집에서)  글로 사진 만들기 — 선택 노트북 make_images_optional.ipynb
+
+수업에서는 Colab 노트북을 LLM(3부)에만 쓴다. 탐지기 실습(실습 3 · 4)에 올리는 AI 사진 5장은 zip의 docs/탐지용사진/ 에 미리 들어 있다
+(sdxl-turbo · Colab T4 · 2026-10-12 생성 · 사람 없음). 같은 것을 직접 만들어 보려면 아래 선택 노트북을 집에서 돌린다.
+
+[선택 노트북] notebook/make_images_optional.ipynb — Colab "파일 > 노트 업로드", "런타임 > 런타임 유형 변경 > T4 GPU". 셀 1 준비(약 3분, 생성 모델 약 7GB) · 셀 2 4장 · 셀 3 문서 1장 + zip.
+
+[셀 2] PROMPT(영어)를 바꿔 가며 4장. 사람 · 얼굴 · 실존 인물 · 로고 금지.
+  바꿔 볼 문장 10개(그대로 복사):
+   "a photo of a wooden office desk with a laptop, a coffee mug and documents, window light, realistic"
+   "a photo of an empty meeting room with a long table and chairs, morning light"
+   "a close-up photo of a stack of printed invoices with a stapler, office"
+   "a photo of a city street at night with wet pavement and traffic lights, no people"
+   "a photo of a warehouse shelf with cardboard boxes and a forklift"
+   "a photo of a parking lot with three delivery vans, overcast sky"
+   "a photo of a bowl of fruit on a kitchen table, natural light"
+   "a photo of a mountain road in autumn, fog, realistic"
+   "a scanned photo of a handwritten shopping list on lined paper"
+   "a photo of a vintage radio on a wooden shelf"
+  기대 출력: "4장, N초. made/ai_1.png ~ ai_4.png" + 2x2 그림. T4 실측 4장 8초(첫 실행), 이후 2~3초.
+
+[셀 3] PROMPT2(서명 있는 계약서)로 1장 더 → 만든사진.zip(AI 5장 + 진짜 2장) 내려받기. 탐지기 · Content Credentials 사이트에 올려 본다(04 · 05).
+
+[체크]
+( ) 4장이 서로 다르다 (같은 글, 다른 잡음)
+( ) 글자 · 손 · 반복 무늬처럼 어색한 곳을 하나 찾았다 → 적는다:
+( ) 확인이 끝나면 만든 사진을 지운다
+
+[메모] real_1.jpg(버스), real_2.jpg(축구 선수)는 5차시에 쓴 Ultralytics 공개 사진(카메라로 찍은 진짜). zip의 docs/탐지용사진/ 에도 같은 2장이 있다.

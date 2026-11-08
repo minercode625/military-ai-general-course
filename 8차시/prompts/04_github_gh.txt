@@ -1,0 +1,50 @@
+# 실습 4 — GitHub 가입 · gh 로그인 · git 이름표 (8분)  [2부]
+
+## 1) GitHub 가입 (브라우저)
+1. https://github.com/signup
+2. 이메일(개인) → 비밀번호(다른 곳과 다르게) → 아이디(username)
+3. 퍼즐 확인 → 이메일로 온 코드 입력 → 완료
+- 아이디 = 내 홈페이지 주소: https://아이디.github.io
+  소문자·숫자·하이픈. 실명·소속·군번 같은 개인정보는 넣지 않는다.
+  예: mint-note → https://mint-note.github.io
+- 인증 메일이 안 오면 스팸함. "Continue with Google"도 가능.
+- 이미 계정이 있으면 로그인만 하고 아이디를 메모.
+- 브라우저의 "비밀번호 저장" 제안은 거절 (공용 PC).
+
+## 2) gh 로그인 (새 터미널 창을 하나 더 열어서. Claude Code 창은 그대로)
+```
+gh auth login
+```
+질문에 이렇게 답한다 (화살표로 고르고 Enter):
+- What account do you want to log into?  → GitHub.com
+- What is your preferred protocol for Git operations?  → HTTPS
+- Authenticate Git with your GitHub credentials?  → Y
+- How would you like to authenticate?  → Login with a web browser
+- 화면의 8자리 코드(XXXX-XXXX)를 복사 → Enter → 브라우저가 열림
+  (안 열리면 https://github.com/login/device 를 직접 열기)
+- 코드 입력 → Authorize github
+
+확인:
+```
+gh auth status
+```
+→ `Logged in to github.com account 아이디` 가 보이면 성공
+
+## 3) git 이름표 (커밋에 "누가"로 남는다)
+```
+git config --global user.name "닉네임"
+git config --global user.email "가입한이메일@example.com"
+```
+- 이메일은 GitHub 가입 이메일과 같게.
+- Claude Code에게 시켜도 된다: "git 이름표를 닉네임 민트, 이메일 ○○로 설정해줘"
+
+## 4) Claude Code 창으로 돌아와 확인
+```
+gh auth status 결과를 보여줘.
+```
+
+## 완료 기준
+- [ ] 가입 + 이메일 인증
+- [ ] 아이디 메모 → 내 주소 https://아이디.github.io
+- [ ] gh auth status 에 Logged in
+- [ ] git config 두 줄 완료

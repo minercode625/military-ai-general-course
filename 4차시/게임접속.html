@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prisoner's Dilemma Game</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+
+/* Pre-game */
+#pre-game { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.join-form { background: #16213e; padding: 40px; border-radius: 16px; width: 500px; max-width: 90vw; }
+.join-form h1 { text-align: center; margin-bottom: 8px; font-size: 24px; }
+.join-form p.subtitle { text-align: center; color: #888; margin-bottom: 24px; font-size: 14px; }
+.join-form label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+.join-form input, .join-form textarea {
+    width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px;
+    background: #0f3460; color: #eee; font-size: 14px; margin-bottom: 16px;
+}
+.join-form textarea { height: 150px; resize: vertical; font-family: monospace; }
+.join-form .model-choice { margin-bottom: 16px; }
+.join-form .model-choice label {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    border: 1px solid #333; border-radius: 8px; background: #0f3460;
+    font-weight: 400; font-size: 13px; margin-bottom: 6px; cursor: pointer;
+}
+.join-form .model-choice input { width: auto; margin: 0; }
+.join-form .model-choice label:has(input:checked) { border-color: #e94560; }
+.join-form button {
+    width: 100%; padding: 14px; background: #e94560; color: white; border: none;
+    border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+}
+.join-form button:hover { background: #c73e54; }
+.join-form button:disabled { background: #555; cursor: not-allowed; }
+#waiting-msg { text-align: center; margin-top: 16px; color: #e94560; display: none; }
+
+/* Game screen */
+#game-screen { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+/* Top bar */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 12px 20px; background: #16213e; border-radius: 12px; }
+.top-bar h2 { font-size: 18px; }
+.timer { font-size: 24px; font-weight: 700; color: #e94560; font-variant-numeric: tabular-nums; }
+
+/* Team cards */
+.teams-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.team-card {
+    background: #16213e; border-radius: 12px; padding: 16px; min-width: 150px; flex: 1;
+    text-align: center; border: 2px solid transparent; transition: all 0.2s;
+}
+.team-card.idle { border-color: #2ecc71; }
+.team-card.in_call, .team-card.choosing { border-color: #e94560; }
+.team-card.blocked { border-color: #7f8c8d; opacity: 0.75; }
+.team-card.editing { border-color: #f1c40f; }
+
+/* Strategy edit (mid-game) */
+#edit-strategy-btn {
+    padding: 8px 16px; background: #f1c40f; color: #1a1a2e; border: none;
+    border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700;
+}
+#edit-strategy-btn:disabled { background: #555; color: #999; cursor: not-allowed; }
+#edit-panel { display: none; background: #16213e; border: 2px solid #f1c40f; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+#edit-panel h3 { margin-bottom: 8px; }
+#edit-panel p.hint { color: #888; font-size: 13px; margin-bottom: 10px; }
+#edit-panel textarea {
+    width: 100%; height: 140px; padding: 12px; border: 1px solid #333; border-radius: 8px;
+    background: #0f3460; color: #eee; font-size: 14px; font-family: monospace;
+    resize: vertical; margin-bottom: 12px;
+}
+#edit-panel .edit-actions { display: flex; gap: 10px; }
+#edit-panel button {
+    padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+}
+.btn-save { background: #2ecc71; color: white; }
+.btn-cancel { background: #555; color: white; }
+.team-card .team-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+.team-card .team-score { color: #f1c40f; font-size: 14px; }
+.team-card .team-status { font-size: 12px; color: #888; margin: 4px 0 8px; }
+.team-card button {
+    padding: 8px 16px; background: #2ecc71; color: white; border: none;
+    border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.team-card button:hover { background: #27ae60; }
+.team-card button:disabled { background: #555; cursor: not-allowed; }
+
+/* Conversation panel */
+#call-panel { display: none; background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.call-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.call-header h3 { font-size: 16px; }
+.call-timer { font-size: 18px; font-weight: 700; color: #e94560; font-variant-numeric: tabular-nums; }
+#chat-log { height: 250px; overflow-y: auto; background: #0f3460; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 14px; }
+.chat-msg { margin-bottom: 8px; line-height: 1.4; }
+.chat-msg.mine { color: #2ecc71; }
+.chat-msg.theirs { color: #3498db; }
+.chat-msg.system { color: #e94560; font-style: italic; }
+
+/* Button selection */
+#button-panel { display: none; text-align: center; margin-top: 16px; }
+#button-panel p { margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+
+/* Result overlay */
+#result-panel { display: none; text-align: center; margin-top: 16px; padding: 16px; background: #0f3460; border-radius: 8px; }
+
+/* Leaderboard */
+.leaderboard { background: #16213e; border-radius: 12px; padding: 20px; }
+.leaderboard h3 { margin-bottom: 12px; }
+.leaderboard table { width: 100%; border-collapse: collapse; }
+.leaderboard th, .leaderboard td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #333; }
+.leaderboard th { color: #888; font-size: 12px; text-transform: uppercase; }
+.leaderboard .rank { width: 40px; }
+.leaderboard .highlight { color: #f1c40f; font-weight: 700; }
+
+/* Toast notification */
+#toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: #e74c3c; color: white; padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; z-index: 1000; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Warning banner */
+.warning-banner {
+    background: #e74c3c; color: white; text-align: center; padding: 8px 16px;
+    font-size: 13px; font-weight: 600; margin-bottom: 12px; border-radius: 8px;
+}
+
+/* Game over */
+#game-over { display: none; text-align: center; padding: 40px; }
+
+/* Practice mode (local self-play, no server) */
+#practice-screen { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; }
+.pr-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px 20px; background: #16213e; border-radius: 12px; }
+.pr-topbar h2 { font-size: 18px; }
+.pr-strategies { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.pr-player { flex: 1; min-width: 300px; background: #16213e; border-radius: 12px; padding: 16px; }
+.pr-player h3 { margin-bottom: 8px; font-size: 15px; }
+.pr-player textarea { width: 100%; height: 110px; padding: 10px; border: 1px solid #333; border-radius: 8px; background: #0f3460; color: #eee; font-size: 13px; font-family: monospace; resize: vertical; }
+.pr-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.pr-controls select { padding: 8px; background: #0f3460; color: #eee; border: 1px solid #333; border-radius: 6px; }
+.pr-start { padding: 10px 20px; background: #e94560; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.pr-start:disabled { background: #555; cursor: not-allowed; }
+.pr-reset { padding: 10px 14px; background: #555; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
+.pr-score { margin-left: auto; font-size: 15px; font-weight: 700; }
+#pr-log { background: #16213e; border-radius: 12px; padding: 16px; min-height: 120px; max-height: 380px; overflow-y: auto; }
+.pr-msg { margin-bottom: 8px; padding: 8px 12px; border-radius: 8px; font-size: 13px; max-width: 75%; }
+.pr-msg.a { background: #0f3460; }
+.pr-msg.b { background: #3d2c50; margin-left: auto; }
+.pr-msg.sys { background: transparent; color: #888; text-align: center; max-width: 100%; font-size: 12px; }
+.pr-msg.result { background: #1e4620; color: #b8e6b8; max-width: 100%; text-align: center; font-weight: 600; }
+#game-over h2 { font-size: 28px; margin-bottom: 20px; color: #e94560; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Pre-game Screen -->
+<div id="pre-game">
+  <div class="join-form">
+    <h1>Prisoner's Dilemma</h1>
+    <p class="subtitle">AI Agent Negotiation Game</p>
+    <label for="team-name">Team Name</label>
+    <input type="text" id="team-name" placeholder="Enter your team name" maxlength="20">
+    <label>AI 모델</label>
+    <div class="model-choice" id="model-choice">
+      <label><input type="radio" name="ollama-model" value="gemma4:e4b" checked>
+        <span><b>gemma4:e4b</b> — 사고 모드, 답하기 전에 생각함 (답 약 5초) · 기본</span></label>
+      <label><input type="radio" name="ollama-model" value="gemma4:12b">
+        <span><b>gemma4:12b</b> — 큰 모델, 사고 끔 (답 2~3초)</span></label>
+    </div>
+    <label for="ai-url">AI 주소 <span style="font-weight:400; color:#888;">— Colab 주소 붙여넣기 (비우면 이 PC의 Ollama)</span></label>
+    <input type="text" id="ai-url" placeholder="https://xxxx.trycloudflare.com" autocomplete="off" spellcheck="false">
+    <label for="strategy-prompt">Strategy Prompt</label>
+    <textarea id="strategy-prompt" placeholder="AI 협상가에게 줄 전략 지시문을 작성하세요.&#10;&#10;어떤 조건에서 초록/빨강을 누를지, 어떤 태도로 협상할지 구체적으로 쓸수록 좋습니다."></textarea>
+    <button id="join-btn" onclick="joinGame()">Join Game</button>
+    <button id="leave-btn" onclick="leaveGame()" style="display:none; margin-top:8px; background:#555;">나가기 (팀명/전략 수정)</button>
+    <button id="practice-btn" onclick="enterPractice()" style="margin-top:8px; background:#0f3460; border:1px solid #e94560;">연습 모드 — 서버 없이 전략 테스트</button>
+    <p id="waiting-msg">Joined! Waiting for admin to start the game...</p>
+  </div>
+</div>
+
+<!-- Game Screen -->
+<div id="game-screen">
+  <div class="warning-banner">연결이 끊겨도 자동 재접속됩니다. 진행 중이던 통화만 몰수 처리되니 게임 중 새로고침은 피하세요.</div>
+  <div class="top-bar">
+    <h2 id="my-team-name">Team ?</h2>
+    <button id="edit-strategy-btn" onclick="startEdit()" disabled>전략 수정</button>
+    <div class="timer" id="game-timer">05:00</div>
+  </div>
+
+  <div id="edit-panel">
+    <h3>전략 수정 중</h3>
+    <p class="hint">수정하는 동안에는 통화를 걸 수도, 받을 수도 없습니다. 저장하면 다음 통화부터 새 전략이 적용됩니다.</p>
+    <textarea id="edit-strategy-text"></textarea>
+    <div class="edit-actions">
+      <button class="btn-save" onclick="saveEdit()">저장 후 복귀</button>
+      <button class="btn-cancel" onclick="cancelEdit()">취소</button>
+    </div>
+  </div>
+
+  <div class="teams-grid" id="teams-grid"></div>
+
+  <div id="call-panel">
+    <div class="call-header">
+      <h3 id="call-opponent">Talking to: ?</h3>
+      <div class="call-timer" id="call-timer">40s</div>
+    </div>
+    <div id="chat-log"></div>
+    <div id="button-panel">
+      <p>AI is choosing a button...</p>
+    </div>
+    <div id="result-panel"></div>
+  </div>
+
+  <div class="leaderboard">
+    <h3>Leaderboard</h3>
+    <table>
+      <thead><tr><th class="rank">#</th><th>Team</th><th>Score</th></tr></thead>
+      <tbody id="leaderboard-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div id="game-over">
+  <h2>Game Over!</h2>
+  <div class="leaderboard">
+    <h3>Final Scores</h3>
+    <table>
+      <thead><tr><th class="rank">#</th><th>Team</th><th>Score</th></tr></thead>
+      <tbody id="final-leaderboard"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Practice Mode (local self-play, no server) -->
+<div id="practice-screen">
+  <div class="pr-topbar">
+    <h2>연습 모드 — 로컬 시뮬레이션 (서버 접속 없음)</h2>
+    <button class="pr-reset" onclick="exitPractice()">← 나가기</button>
+  </div>
+  <div class="pr-strategies">
+    <div class="pr-player">
+      <h3>A팀 전략 (먼저 말을 걺)</h3>
+      <textarea id="pr-strategy-a" placeholder="내 전략 프롬프트 — 조인 화면에 입력한 전략이 자동으로 들어옵니다"></textarea>
+    </div>
+    <div class="pr-player">
+      <h3>B팀 전략 (상대)</h3>
+      <textarea id="pr-strategy-b" placeholder="상대 팀이 쓸 법한 전략을 상상해서 직접 작성하세요 — 상대를 예측하는 것도 훈련입니다"></textarea>
+    </div>
+  </div>
+  <div class="pr-controls">
+    <label>대화 길이
+      <select id="pr-turns">
+        <option value="4">4마디</option>
+        <option value="6" selected>6마디</option>
+        <option value="8">8마디</option>
+      </select>
+    </label>
+    <button id="pr-start" class="pr-start" onclick="prRunRound()">통화 시작</button>
+    <button class="pr-reset" onclick="prReset()">기록 초기화</button>
+    <div class="pr-score" id="pr-score"></div>
+  </div>
+  <div id="pr-log"></div>
+</div>
+
+<script>
+// --- State ---
+let ws = null;
+let myTeam = "";
+let myStrategy = "";
+let gameEnded = false;
+let kicked = false;
+let currentCall = null; // {call_id, opponent, history, timer_end, you_are}
+let gameTimerEnd = null;
+let gameTimerInterval = null;
+let callTimerInterval = null;
+let lastOllamaErrorAt = 0;
+
+const queryParams = new URLSearchParams(location.search);
+function readLocalSetting(key) {
+    try { return localStorage.getItem(key); } catch (err) { return null; }
+}
+
+function writeLocalSetting(key, value) {
+    try { localStorage.setItem(key, value); } catch (err) {}
+}
+
+// joined flag is per-TAB (sessionStorage): a refresh auto-rejoins,
+// but a new tab always shows the join form (no team hijacking between tabs).
+function readJoined() {
+    try { return sessionStorage.getItem("joined"); } catch (err) { return null; }
+}
+function writeJoined(v) {
+    try { sessionStorage.setItem("joined", v); } catch (err) {}
+}
+function clearJoined() {
+    try { sessionStorage.removeItem("joined"); } catch (err) {}
+    try { localStorage.removeItem("joined"); } catch (err) {}  // legacy cleanup
+}
+
+const DEFAULT_SERVER = "http://34.47.83.192:8080";  // 수업용 게임 서버 (내장)
+const remoteServer = parseUrlParam(queryParams.get("server") || DEFAULT_SERVER, "https");
+const DEFAULT_OLLAMA = "http://127.0.0.1:11434";
+let OLLAMA_BASE_URL = normalizeBaseUrl(
+    queryParams.get("ollama") || readLocalSetting("ollama_base_url") || DEFAULT_OLLAMA,
+    "http"
+) || DEFAULT_OLLAMA;
+const MIN_TURN_MS = 3000;  // minimum time per chat line (pacing)
+let ollamaThinks = false;  // true when the chosen model has a thinking mode
+// Thinking stays on by default: the model follows a hidden strategy far better
+// when it reasons first (T4: gemma4:e4b ~5s per line). gemma4:12b needs ~40s
+// per line with thinking — longer than a whole call — so it is switched off there.
+const NO_THINK_MODELS = ["gemma4:12b"];
+function thinkingOff() {
+    return ollamaThinks && NO_THINK_MODELS.some((m) => ollamaModel.startsWith(m));
+}
+let OLLAMA_MODEL = queryParams.get("model") || readLocalSetting("ollama_model") || "gemma4:e4b";
+let ollamaModel = OLLAMA_MODEL;  // effective model name, resolved against installed tags at join time
+if (queryParams.get("ollama")) writeLocalSetting("ollama_base_url", OLLAMA_BASE_URL);
+if (queryParams.get("model")) writeLocalSetting("ollama_model", OLLAMA_MODEL);
+
+function parseUrlParam(value, defaultScheme) {
+    if (!value || !value.trim()) return null;
+    const raw = value.trim();
+    const text = /^[a-z][a-z\d+.-]*:\/\//i.test(raw) ? raw : `${defaultScheme}://${raw}`;
+    try { return new URL(text); } catch (err) { return null; }
+}
+
+function normalizeBaseUrl(value, defaultScheme) {
+    const parsed = parseUrlParam(value, defaultScheme);
+    return parsed ? parsed.origin : "";
+}
+
+// Join-form "AI 주소" field: blank = this PC's Ollama, otherwise a remote
+// Ollama endpoint (e.g. the Colab tunnel address). Applied on Join / Practice.
+function applyAiUrl() {
+    const raw = document.getElementById("ai-url").value.trim();
+    if (!raw) {
+        OLLAMA_BASE_URL = DEFAULT_OLLAMA;
+        writeLocalSetting("ollama_base_url", "");
+        return true;
+    }
+    const url = normalizeBaseUrl(raw, "https");
+    if (!url) {
+        alert("AI 주소 형식이 올바르지 않습니다. Colab에 나온 https:// 주소를 그대로 붙여 넣으세요.");
+        return false;
+    }
+    OLLAMA_BASE_URL = url;
+    writeLocalSetting("ollama_base_url", url);
+    return true;
+}
+
+function websocketUrl(path) {
+    if (remoteServer) {
+        const protocol = remoteServer.protocol === "https:" ? "wss:" : "ws:";
+        return `${protocol}//${remoteServer.host}${path}`;
+    }
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//${location.host}${path}`;
+}
+
+// --- Pre-game ---
+// Prefill the join form after a refresh
+(function prefillJoinForm() {
+    const savedTeam = readLocalSetting("team_name");
+    const savedStrategy = readLocalSetting("strategy_prompt");
+    if (savedTeam) document.getElementById("team-name").value = savedTeam;
+    if (savedStrategy) document.getElementById("strategy-prompt").value = savedStrategy;
+    if (OLLAMA_BASE_URL !== DEFAULT_OLLAMA) document.getElementById("ai-url").value = OLLAMA_BASE_URL;
+})();
+
+// Reflect the active model (URL param / saved choice) in the radio group.
+// A model outside the course pair (?model=...) gets its own dynamic option.
+(function prefillModelChoice() {
+    const base = (s) => s.split(":")[0];
+    const radios = [...document.querySelectorAll('input[name="ollama-model"]')];
+    const match = radios.find((r) => r.value === OLLAMA_MODEL)
+        || radios.find((r) => base(r.value) === base(OLLAMA_MODEL));
+    if (match) { match.checked = true; return; }
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "ollama-model";
+    input.value = OLLAMA_MODEL;
+    input.checked = true;
+    const span = document.createElement("span");
+    span.textContent = `${OLLAMA_MODEL} — URL로 지정된 모델`;
+    label.appendChild(input);
+    label.appendChild(span);
+    document.getElementById("model-choice").appendChild(label);
+})();
+
+// Auto-rejoin: if we joined before, reconnect without requiring a Join click.
+// Escape hatch: open with ?fresh=1 to start over with a clean form.
+(async function autoRejoin() {
+    if (queryParams.get("fresh")) {
+        clearJoined();
+        return;
+    }
+    const savedTeam = readLocalSetting("team_name");
+    const savedStrategy = readLocalSetting("strategy_prompt");
+    if (readJoined() !== "1" || !savedTeam || !savedStrategy) return;
+
+    myTeam = savedTeam;
+    myStrategy = savedStrategy;
+    const ollamaStatus = await checkOllamaReady();
+    if (!ollamaStatus.ok) {
+        showToast(ollamaStatus.message, 7000);
+        return;  // fall back to the manual join form
+    }
+    document.getElementById("join-btn").disabled = true;
+    document.getElementById("waiting-msg").style.display = "block";
+    document.getElementById("leave-btn").style.display = "block";
+    showToast(`자동 재접속: ${myTeam}`, 3000);
+    connectWs();
+})();
+
+async function joinGame() {
+    myTeam = document.getElementById("team-name").value.trim();
+    myStrategy = document.getElementById("strategy-prompt").value.trim();
+    if (!myTeam) { alert("Enter a team name"); return; }
+    if (!myStrategy) { alert("Enter a strategy prompt"); return; }
+    if (!applyAiUrl()) return;
+
+    const chosenModel = document.querySelector('input[name="ollama-model"]:checked');
+    if (chosenModel) {
+        OLLAMA_MODEL = chosenModel.value;
+        ollamaModel = OLLAMA_MODEL;
+    }
+
+    // Persist so an accidental refresh doesn't wipe the form —
+    // rejoining with the same team name keeps the server-side score.
+    writeLocalSetting("team_name", myTeam);
+    writeLocalSetting("strategy_prompt", myStrategy);
+    writeLocalSetting("ollama_model", OLLAMA_MODEL);
+    kicked = false;  // fresh join after an admin kill
+
+    document.getElementById("join-btn").disabled = true;
+    const ollamaStatus = await checkOllamaReady();
+    if (!ollamaStatus.ok) {
+        alert(ollamaStatus.message);
+        showToast(ollamaStatus.message, 7000);
+        document.getElementById("join-btn").disabled = false;
+        return;
+    }
+
+    document.getElementById("waiting-msg").style.display = "block";
+    document.getElementById("leave-btn").style.display = "block";
+    connectWs();
+}
+
+function connectWs() {
+    ws = new WebSocket(websocketUrl(`/ws/${encodeURIComponent(myTeam)}`));
+    ws.onopen = () => {
+        writeJoined("1");
+        // Any call we were in has been forfeited by the server — clear stale UI
+        currentCall = null;
+        document.getElementById("call-panel").style.display = "none";
+        ws.send(JSON.stringify({type: "set_strategy", strategy_prompt: myStrategy}));
+    };
+    ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        handleMessage(data);
+    };
+    ws.onclose = () => {
+        if (gameEnded || kicked) return;
+        showToast("연결 끊김 — 자동 재접속 중...", 2500);
+        setTimeout(connectWs, 2500);
+    };
+}
+
+// --- Message Router ---
+function handleMessage(data) {
+    switch (data.type) {
+        case "game_start": onGameStart(data); break;
+        case "game_end": onGameEnd(data); break;
+        case "state_update": onStateUpdate(data); break;
+        case "call_started": onCallStarted(data); break;
+        case "call_incoming": onCallIncoming(data); break;
+        case "chat_receive": onChatReceive(data); break;
+        case "choose_button": onChooseButton(data); break;
+        case "call_result": onCallResult(data); break;
+        case "error": onError(data); break;
+        case "kicked": onKicked(); break;
+        case "kicked_duplicate": onKicked("다른 창에서 같은 팀명으로 접속되어 이 창의 연결이 해제되었습니다."); break;
+        case "edit_started": onEditStarted(); break;
+        case "edit_saved": onEditSaved(data); break;
+        case "edit_cancelled": onEditCancelled(); break;
+    }
+}
+
+function leaveGame() {
+    kicked = true;  // suppress auto-reconnect
+    clearJoined();
+    if (ws) {
+        try { ws.send(JSON.stringify({type: "leave"})); } catch (err) {}
+        try { ws.close(); } catch (err) {}
+    }
+    document.getElementById("join-btn").disabled = false;
+    document.getElementById("waiting-msg").style.display = "none";
+    document.getElementById("leave-btn").style.display = "none";
+    showToast("연결 해제됨. 팀명/전략 수정 후 다시 입장하세요.", 4000);
+}
+
+function onKicked(message) {
+    kicked = true;
+    clearJoined();
+    document.getElementById("leave-btn").style.display = "none";
+    clearInterval(gameTimerInterval);
+    clearInterval(callTimerInterval);
+    gameEnded = false;
+    gameTimerEnd = null;
+    currentCall = null;
+    document.getElementById("game-screen").style.display = "none";
+    document.getElementById("game-over").style.display = "none";
+    document.getElementById("call-panel").style.display = "none";
+    document.getElementById("pre-game").style.display = "flex";
+    document.getElementById("join-btn").disabled = false;
+    document.getElementById("waiting-msg").style.display = "none";
+    showToast(message || "관리자가 게임을 초기화했습니다. 팀명 확인 후 다시 입장하세요.", 6000);
+}
+
+// --- Game Events ---
+function onGameStart(data) {
+    gameTimerEnd = data.timer_end;
+    document.getElementById("leave-btn").style.display = "none";
+    document.getElementById("pre-game").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
+    document.getElementById("my-team-name").textContent = myTeam;
+    startGameTimer();
+}
+
+function onGameEnd(data) {
+    gameEnded = true;
+    clearInterval(gameTimerInterval);
+    clearInterval(callTimerInterval);
+    document.getElementById("game-screen").style.display = "none";
+    document.getElementById("game-over").style.display = "block";
+    const tbody = document.getElementById("final-leaderboard");
+    tbody.innerHTML = "";
+    data.final_scores.forEach((entry, i) => {
+        const tr = document.createElement("tr");
+        const isMe = entry.team === myTeam;
+        tr.innerHTML = `<td class="rank">${i+1}</td><td${isMe ? ' class="highlight"' : ''}>${escapeHtml(entry.team)}</td><td${isMe ? ' class="highlight"' : ''}>${entry.score}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function onStateUpdate(data) {
+    if (data.timer_end && !gameTimerEnd) {
+        gameTimerEnd = data.timer_end;
+    }
+    // Rejoin support: if the game is already running but we are still on the
+    // pre-game screen (e.g., after an accidental page refresh), enter the game.
+    const gameScreen = document.getElementById("game-screen");
+    const gameOver = document.getElementById("game-over");
+    if (data.game_status === "running" && myTeam
+        && gameScreen.style.display !== "block" && gameOver.style.display !== "block") {
+        document.getElementById("pre-game").style.display = "none";
+        gameScreen.style.display = "block";
+        document.getElementById("my-team-name").textContent = myTeam;
+        if (gameTimerInterval) clearInterval(gameTimerInterval);
+        startGameTimer();
+    }
+    // Rejoined after the game already ended (missed the game_end event)
+    if (data.game_status === "finished" && !gameEnded && myTeam) {
+        onGameEnd({final_scores: data.leaderboard});
+    }
+    // Strategy edit button: only while idle in a running game
+    const myInfo = data.teams[myTeam];
+    const editBtn = document.getElementById("edit-strategy-btn");
+    const editPanel = document.getElementById("edit-panel");
+    if (myInfo) {
+        if (myInfo.status === "editing") {
+            editBtn.disabled = true;
+        } else {
+            editBtn.disabled = !(data.game_status === "running" && myInfo.status === "idle");
+            // Server pushed us out of editing (e.g., reconnect) — close stale panel
+            if (editPanel.style.display === "block") {
+                editPanel.style.display = "none";
+            }
+        }
+    }
+    updateTeamCards(data);
+    updateLeaderboard(data.leaderboard);
+}
+
+function onError(data) {
+    console.error("Server error:", data.message);
+    // Expected on every reconnect during a running game — not student-actionable
+    if (data.message && data.message.includes("Cannot change strategy")) return;
+    showToast(data.message);
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => (
+        {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]
+    ));
+}
+
+function showToast(msg, duration = 3000) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, duration);
+}
+
+// --- Mid-game Strategy Editing ---
+function startEdit() {
+    ws.send(JSON.stringify({type: "edit_start"}));
+}
+
+function onEditStarted() {
+    document.getElementById("edit-strategy-text").value = myStrategy;
+    document.getElementById("edit-panel").style.display = "block";
+    document.getElementById("edit-strategy-btn").disabled = true;
+}
+
+function saveEdit() {
+    const v = document.getElementById("edit-strategy-text").value.trim();
+    if (!v) { alert("전략을 입력하세요"); return; }
+    ws.send(JSON.stringify({type: "edit_save", strategy_prompt: v}));
+}
+
+function cancelEdit() {
+    ws.send(JSON.stringify({type: "edit_cancel"}));
+}
+
+function onEditSaved(data) {
+    myStrategy = data.strategy_prompt;
+    writeLocalSetting("strategy_prompt", myStrategy);
+    document.getElementById("edit-panel").style.display = "none";
+    showToast("새 전략이 적용되었습니다. 다음 통화부터 반영됩니다.", 4000);
+}
+
+function onEditCancelled() {
+    document.getElementById("edit-panel").style.display = "none";
+}
+
+// --- Team Cards ---
+function updateTeamCards(data) {
+    const grid = document.getElementById("teams-grid");
+    grid.innerHTML = "";
+    const me = data.teams[myTeam];
+    // Teams that could take a call right now (same definition as the server)
+    const available = Object.entries(data.teams)
+        .filter(([n, i]) => n !== myTeam && i.connected && i.status === "idle")
+        .map(([n]) => n);
+    for (const [name, info] of Object.entries(data.teams)) {
+        if (name === myTeam) continue;
+        // No immediate rematch: the team we just played (either side) must wait
+        // until one of us has played someone else — unless nobody else is available.
+        const justPlayed = !!me && (me.last_opponent === name || info.last_opponent === myTeam);
+        const rematchBlocked = justPlayed && info.status === "idle" && available.some((n) => n !== name);
+        const card = document.createElement("div");
+        card.className = `team-card ${info.status}${rematchBlocked ? " blocked" : ""}`;
+        const canCall = data.game_status === "running" && info.status === "idle"
+            && !!me && me.status === "idle" && !rematchBlocked;
+        const statusText = info.status === "idle" ? (rematchBlocked ? "직전 상대 (다른 팀 먼저)" : "Available")
+            : info.status === "in_call" ? "In Call" : info.status === "editing" ? "전략 수정 중" : "Choosing...";
+        card.innerHTML = `
+            <div class="team-name">${escapeHtml(name)}</div>
+            <div class="team-score">Score: ${info.score}</div>
+            <div class="team-status">${statusText}</div>
+        `;
+        const btn = document.createElement("button");
+        btn.textContent = "Call";
+        btn.disabled = !canCall;
+        btn.addEventListener("click", () => makeCall(name));
+        card.appendChild(btn);
+        grid.appendChild(card);
+    }
+}
+
+function updateLeaderboard(leaderboard) {
+    const tbody = document.getElementById("leaderboard-body");
+    tbody.innerHTML = "";
+    leaderboard.forEach((entry, i) => {
+        const tr = document.createElement("tr");
+        const isMe = entry.team === myTeam;
+        tr.innerHTML = `<td class="rank">${i+1}</td><td${isMe ? ' class="highlight"' : ''}>${escapeHtml(entry.team)}</td><td${isMe ? ' class="highlight"' : ''}>${entry.score}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+// --- Calling ---
+function makeCall(target) {
+    ws.send(JSON.stringify({type: "call", target_team: target}));
+}
+
+function onCallStarted(data) {
+    startCall(data, data.opponent);
+    // Caller speaks first — generate first message
+    generateAndSendMessage();
+}
+
+function onCallIncoming(data) {
+    startCall(data, data.from_team);
+    // Receiver waits for first message
+}
+
+function startCall(data, opponent) {
+    currentCall = {
+        call_id: data.call_id,
+        opponent: opponent,
+        history: data.history,
+        timer_end: data.timer_end,
+        you_are: data.you_are,
+        messages: [],  // {role, content} for Ollama
+    };
+    document.getElementById("call-panel").style.display = "block";
+    document.getElementById("call-opponent").textContent = `Talking to: ${opponent}`;
+    document.getElementById("chat-log").innerHTML = "";
+    document.getElementById("button-panel").style.display = "none";
+    document.getElementById("result-panel").style.display = "none";
+    startCallTimer(data.timer_end);
+}
+
+// --- Chat ---
+function onChatReceive(data) {
+    if (!currentCall || data.call_id !== currentCall.call_id) return;
+    appendChat(data.message, "theirs");
+    // Opponent lines go in as plain text — JSON-wrapping them degrades the
+    // conversational quality of small models (own lines stay JSON to match
+    // the enforced output format).
+    currentCall.messages.push({role: "user", content: data.message});
+    // Generate response
+    generateAndSendMessage();
+}
+
+function appendChat(text, cls) {
+    const log = document.getElementById("chat-log");
+    const div = document.createElement("div");
+    div.className = `chat-msg ${cls}`;
+    const prefix = cls === "mine" ? "Me" : cls === "theirs" ? currentCall.opponent : "System";
+    div.textContent = `[${prefix}] ${text}`;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+}
+
+// --- Ollama Integration ---
+async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(url, {...options, signal: controller.signal});
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+function buildOllamaHelpMessage(detail = "") {
+    const remotePage = location.protocol === "https:" && !["localhost", "127.0.0.1"].includes(location.hostname);
+    if (remotePage) {
+        return `Ollama 연결 실패. 외부 HTTPS 페이지에서는 브라우저가 로컬 Ollama를 차단할 수 있습니다. 학생용 페이지를 127.0.0.1에서 열고 ?server=${location.origin} 를 붙여 접속하세요.${detail ? " (" + detail + ")" : ""}`;
+    }
+    if (OLLAMA_BASE_URL !== DEFAULT_OLLAMA) {
+        return `AI 연결 실패. Colab 노트북이 실행 중인지, AI 주소(${OLLAMA_BASE_URL})를 정확히 붙여 넣었는지 확인하세요.${detail ? " (" + detail + ")" : ""}`;
+    }
+    return `Ollama 연결 실패. Ollama 앱이 켜져 있고 ${OLLAMA_BASE_URL} 에서 ${OLLAMA_MODEL} 모델을 사용할 수 있는지 확인하세요.${detail ? " (" + detail + ")" : ""}`;
+}
+
+async function checkOllamaReady() {
+    try {
+        const resp = await fetchWithTimeout(`${OLLAMA_BASE_URL}/api/tags`, {method: "GET"}, 5000);
+        if (!resp.ok) {
+            return {ok: false, message: buildOllamaHelpMessage(`HTTP ${resp.status}`)};
+        }
+        const data = await resp.json();
+        const modelNames = (data.models || []).map((m) => m.name);
+        // Exact tag match first; otherwise accept any installed tag of the same base model
+        // (e.g. requested "exaone3.5" matches installed "exaone3.5:2.4b")
+        const base = (s) => s.split(":")[0];
+        const found = modelNames.find((n) => n === OLLAMA_MODEL)
+            || modelNames.find((n) => base(n) === base(OLLAMA_MODEL))
+            || (modelNames.length === 1 ? modelNames[0] : undefined);
+        if (!found) {
+            return {
+                ok: false,
+                message: `Ollama에는 ${OLLAMA_MODEL} 모델이 없습니다. 터미널에서 ollama pull ${OLLAMA_MODEL} 실행 후 다시 입장하세요.`,
+            };
+        }
+        ollamaModel = found;
+        // Ask whether the model has a thinking mode (see NO_THINK_MODELS).
+        try {
+            const showResp = await fetchWithTimeout(`${OLLAMA_BASE_URL}/api/show`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({model: found}),
+            }, 5000);
+            const show = showResp.ok ? await showResp.json() : {};
+            ollamaThinks = (show.capabilities || []).includes("thinking");
+        } catch (err) { ollamaThinks = false; }
+        // Fire-and-forget: first unload any OTHER model still resident from a
+        // previous join (keep_alive 30m would pin it in RAM alongside the new
+        // one — fatal on low-RAM laptops), then warm up the chosen model so
+        // the first call isn't hit by a cold-load delay (30s+ on CPU laptops).
+        (async () => {
+            try {
+                const psResp = await fetchWithTimeout(`${OLLAMA_BASE_URL}/api/ps`, {method: "GET"}, 3000);
+                if (psResp.ok) {
+                    const ps = await psResp.json();
+                    for (const m of (ps.models || [])) {
+                        if (base(m.name) === base(found)) continue;
+                        await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
+                            method: "POST",
+                            headers: {"Content-Type": "application/json"},
+                            body: JSON.stringify({model: m.name, messages: [], keep_alive: 0}),
+                        }).catch(() => {});
+                    }
+                }
+            } catch (err) { /* unload is best-effort */ }
+            fetch(`${OLLAMA_BASE_URL}/api/generate`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({model: found, prompt: "", keep_alive: "30m"}),
+            }).catch(() => {});
+        })();
+        return {ok: true};
+    } catch (err) {
+        const detail = err && err.name === "AbortError" ? "timeout" : "";
+        return {ok: false, message: buildOllamaHelpMessage(detail)};
+    }
+}
+
+function reportOllamaError(message) {
+    const now = Date.now();
+    if (now - lastOllamaErrorAt > 5000) {
+        lastOllamaErrorAt = now;
+        showToast(message, 7000);
+    }
+}
+
+// A model sometimes loops inside the message string until the token cap
+// (num_predict) cuts the JSON off. Keep the first sentence instead of
+// dropping the whole turn. A cut-off button reply cannot be recovered.
+function parseAiReply(content, includeButton) {
+    try {
+        const reply = JSON.parse(content);
+        // Drop stray JSON punctuation the model sometimes leaves at the end (e.g. `", `).
+        if (typeof reply.message === "string") reply.message = reply.message.replace(/[",\s]+$/, "");
+        return reply;
+    } catch (err) {
+        const m = content.match(/"message"\s*:\s*"([^"]*)/);
+        if (!m || includeButton) throw err;
+        const first = m[1].match(/^.*?[.!?]/);
+        return {message: (first ? first[0] : m[1].slice(0, 60)).trim()};
+    }
+}
+
+async function callOllama(messages, includeButton, systemPromptOverride = null) {
+    const systemPrompt = systemPromptOverride || buildSystemPrompt();
+    const format = includeButton
+        ? {type: "object", properties: {message: {type: "string"}, button: {type: "string", enum: ["green", "red"]}}, required: ["message", "button"]}
+        : {type: "object", properties: {message: {type: "string"}}, required: ["message"]};
+
+    const allMessages = [{role: "system", content: systemPrompt}, ...messages];
+
+    try {
+        const resp = await fetchWithTimeout(`${OLLAMA_BASE_URL}/api/chat`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                model: ollamaModel,
+                messages: allMessages,
+                stream: false,
+                format: format,
+                keep_alive: "30m",
+                // Token cap bounds a runaway reply; thinking tokens count toward it.
+                options: {num_predict: thinkingOff() ? 120 : 1000},
+                ...(thinkingOff() ? {think: false} : {}),
+            }),
+        }, 45000);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const result = await resp.json();
+        if (!result.message || !result.message.content) throw new Error("empty response");
+        return parseAiReply(result.message.content, includeButton);
+    } catch (err) {
+        console.error("Ollama error:", err);
+        reportOllamaError(buildOllamaHelpMessage(err.message || ""));
+        if (includeButton) return {message: "...", button: Math.random() > 0.5 ? "green" : "red"};
+        return {message: "..."};
+    }
+}
+
+function buildSystemPromptFor(strategy, opponentName, history) {
+    let prompt = `You are playing an iterated Prisoner's Dilemma game.
+After a conversation with your opponent, you must choose green or red.
+Scoring: green+green = both get +3, green+red = green gets 0 and red gets +5, red+red = both get +1.
+During conversation, respond with JSON: {"message": "your message"}
+When asked to choose a button, respond with JSON: {"message": "final words", "button": "green" or "red"}
+Keep messages short (1-2 sentences).
+This is a live negotiation, not a monologue: react to the opponent's last message — answer their questions and address their proposals before adding your own point. Never repeat a sentence you already said.
+Do not invent past rounds — rely only on the interaction history provided in this prompt. If none is provided, this is your first conversation with this opponent.
+Always speak Korean. 모든 대화는 반드시 한국어로만 한다. 상대가 다른 언어를 쓰더라도 한국어로 답한다.`;
+
+    // Add opponent history
+    if (history && history.length > 0) {
+        prompt += `\n\nPrevious interactions with ${opponentName}:`;
+        let greenCount = 0, redCount = 0;
+        history.forEach((h) => {
+            const theirBtn = h.buttons[opponentName] || "unknown";
+            if (theirBtn === "green") greenCount++;
+            if (theirBtn === "red") redCount++;
+            prompt += `\n- Round ${h.round}: They chose ${theirBtn}`;
+        });
+        prompt += `\n${opponentName} cumulative: green ${greenCount} times, red ${redCount} times`;
+    }
+
+    // Add student strategy
+    prompt += `\n\n[Your Strategy]\n${strategy}`;
+
+    return prompt;
+}
+
+function buildSystemPrompt() {
+    return buildSystemPromptFor(
+        myStrategy,
+        currentCall ? currentCall.opponent : "opponent",
+        currentCall ? currentCall.history : []
+    );
+}
+
+// --- Practice Mode (local self-play — both AIs run on this laptop's Ollama) ---
+const PR_NAMES = {A: "A팀", B: "B팀"};
+// Same shape as the server's pair history — buttons keyed by team name, so
+// one array serves both perspectives in buildSystemPromptFor.
+let prHistory = [];
+let prScores = {A: 0, B: 0};
+let prRunning = false;
+
+async function enterPractice() {
+    if (!applyAiUrl()) return;
+    const chosenModel = document.querySelector('input[name="ollama-model"]:checked');
+    if (chosenModel) {
+        OLLAMA_MODEL = chosenModel.value;
+        ollamaModel = OLLAMA_MODEL;
+        writeLocalSetting("ollama_model", OLLAMA_MODEL);
+    }
+    const btn = document.getElementById("practice-btn");
+    btn.disabled = true;
+    const st = await checkOllamaReady();
+    btn.disabled = false;
+    if (!st.ok) {
+        alert(st.message);
+        showToast(st.message, 7000);
+        return;
+    }
+    // Prefill A with the strategy from the join form (or the saved one)
+    const current = document.getElementById("strategy-prompt").value.trim()
+        || readLocalSetting("strategy_prompt") || "";
+    if (current && !document.getElementById("pr-strategy-a").value.trim()) {
+        document.getElementById("pr-strategy-a").value = current;
+    }
+    document.getElementById("pre-game").style.display = "none";
+    document.getElementById("practice-screen").style.display = "block";
+    prUpdateScore();
+}
+
+function exitPractice() {
+    if (prRunning && !confirm("라운드 진행 중입니다. 나갈까요?")) return;
+    prRunning = false;
+    document.getElementById("practice-screen").style.display = "none";
+    document.getElementById("pre-game").style.display = "flex";
+    // Practice may have tweaked A's strategy — carry it back to the join form
+    const stratA = document.getElementById("pr-strategy-a").value.trim();
+    if (stratA) document.getElementById("strategy-prompt").value = stratA;
+}
+
+function prReset() {
+    if (prRunning) return;
+    prHistory = [];
+    prScores = {A: 0, B: 0};
+    document.getElementById("pr-log").innerHTML = "";
+    prUpdateScore();
+}
+
+function prUpdateScore() {
+    document.getElementById("pr-score").textContent =
+        `A팀 ${prScores.A} : ${prScores.B} B팀 · 라운드 ${prHistory.length}`;
+}
+
+function prAppend(cls, text) {
+    const log = document.getElementById("pr-log");
+    const div = document.createElement("div");
+    div.className = `pr-msg ${cls}`;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+}
+
+// Rebuild the Ollama message array exactly as the live game does:
+// own lines become assistant JSON, opponent lines stay plain text.
+function prTranscript(msgs, who) {
+    return msgs.map((m) => ({
+        role: m.from === who ? "assistant" : "user",
+        content: m.from === who ? JSON.stringify({message: m.content}) : m.content,
+    }));
+}
+
+async function prRunRound() {
+    if (prRunning) return;
+    const stratA = document.getElementById("pr-strategy-a").value.trim();
+    const stratB = document.getElementById("pr-strategy-b").value.trim();
+    if (!stratA || !stratB) { alert("두 플레이어의 전략을 모두 입력하세요"); return; }
+    const turns = parseInt(document.getElementById("pr-turns").value, 10);
+
+    prRunning = true;
+    const startBtn = document.getElementById("pr-start");
+    startBtn.disabled = true;
+
+    const sys = {
+        A: buildSystemPromptFor(stratA, PR_NAMES.B, prHistory),
+        B: buildSystemPromptFor(stratB, PR_NAMES.A, prHistory),
+    };
+    prAppend("sys", `— 라운드 ${prHistory.length + 1} 시작 (${ollamaModel}) —`);
+
+    // Conversation: A speaks first (like the caller in the live game), then alternate
+    const msgs = [];
+    for (let t = 0; t < turns && prRunning; t++) {
+        const who = t % 2 === 0 ? "A" : "B";
+        const thinking = prAppend("sys", `${PR_NAMES[who]} 생각 중...`);
+        const r = await callOllama(prTranscript(msgs, who), false, sys[who]);
+        thinking.remove();
+        if (!prRunning) break;
+        const text = r.message || "...";
+        msgs.push({from: who, content: text});
+        prAppend(who === "A" ? "a" : "b", `[${PR_NAMES[who]}] ${text}`);
+    }
+    if (!prRunning) { startBtn.disabled = false; return; }
+
+    const choosing = prAppend("sys", "대화 종료 — 양쪽 버튼 선택 중...");
+    const chooseMsg = {role: "user", content: "The conversation is over. Choose your button now. Respond with JSON including 'message' and 'button' (green or red)."};
+    const rA = await callOllama([...prTranscript(msgs, "A"), chooseMsg], true, sys.A);
+    const rB = await callOllama([...prTranscript(msgs, "B"), chooseMsg], true, sys.B);
+    choosing.remove();
+
+    const btnA = rA.button || "green";
+    const btnB = rB.button || "green";
+    // Payoff matrix — must match calculate_scores() in server.py
+    const pay = {"green,green": [3, 3], "green,red": [0, 5], "red,green": [5, 0], "red,red": [1, 1]};
+    const [sA, sB] = pay[`${btnA},${btnB}`];
+    prScores.A += sA;
+    prScores.B += sB;
+    prHistory.push({
+        round: prHistory.length + 1,
+        caller: PR_NAMES.A,
+        receiver: PR_NAMES.B,
+        messages: msgs.map((m) => ({from: PR_NAMES[m.from], content: m.content})),
+        buttons: {[PR_NAMES.A]: btnA, [PR_NAMES.B]: btnB},
+        scores: {[PR_NAMES.A]: sA, [PR_NAMES.B]: sB},
+    });
+
+    const emoji = (b) => b === "green" ? "🟢" : "🔴";
+    prAppend("result", `${emoji(btnA)} A팀 ${btnA} (+${sA})  vs  ${emoji(btnB)} B팀 ${btnB} (+${sB})`);
+    prUpdateScore();
+    prRunning = false;
+    startBtn.disabled = false;
+}
+
+async function generateAndSendMessage() {
+    if (!currentCall) return;
+    appendChat("(thinking...)", "system");
+
+    const callId = currentCall.call_id;
+    const startedAt = Date.now();
+    const ollamaMessages = [...currentCall.messages];
+    const result = await callOllama(ollamaMessages, false);
+    // Without thinking a GPU answers in under a second — unpaced, a 40s call
+    // turns into 50 lines nobody can read and the model starts repeating itself.
+    const wait = MIN_TURN_MS - (Date.now() - startedAt);
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    if (!currentCall || currentCall.call_id !== callId) return;  // call ended while generating
+
+    // Remove "thinking" message
+    const log = document.getElementById("chat-log");
+    if (log.lastChild) log.removeChild(log.lastChild);
+
+    const msg = result.message || "...";
+    appendChat(msg, "mine");
+    currentCall.messages.push({role: "assistant", content: JSON.stringify({message: msg})});
+
+    ws.send(JSON.stringify({
+        type: "chat_message",
+        call_id: currentCall.call_id,
+        message: msg,
+    }));
+}
+
+// --- Button Selection ---
+function onChooseButton(data) {
+    if (!currentCall || data.call_id !== currentCall.call_id) return;
+    clearInterval(callTimerInterval);
+    document.getElementById("button-panel").style.display = "block";
+
+    // AI chooses button
+    chooseButton();
+}
+
+async function chooseButton() {
+    const messages = [...currentCall.messages,
+        {role: "user", content: "The conversation is over. Choose your button now. Respond with JSON including 'message' and 'button' (green or red)."}
+    ];
+    const result = await callOllama(messages, true);
+
+    const button = result.button || "green";
+    const msg = result.message || "";
+
+    document.getElementById("button-panel").innerHTML = `
+        <p>AI chose: <span style="color: ${button === 'green' ? '#2ecc71' : '#e74c3c'}; font-size: 20px; font-weight: 700;">${button.toUpperCase()}</span></p>
+        ${msg ? `<p style="color: #888; font-size: 13px; margin-top: 4px;">"${msg}"</p>` : ""}
+    `;
+
+    ws.send(JSON.stringify({
+        type: "button_choice",
+        call_id: currentCall.call_id,
+        button: button,
+    }));
+}
+
+// --- Call Result ---
+function onCallResult(data) {
+    clearInterval(callTimerInterval);
+    const panel = document.getElementById("result-panel");
+    panel.style.display = "block";
+    const myColor = data.my_button === "green" ? "#2ecc71" : "#e74c3c";
+    const theirColor = data.their_button === "green" ? "#2ecc71" : "#e74c3c";
+    panel.innerHTML = `
+        <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Round Result</p>
+        <p>You: <span style="color: ${myColor}; font-weight: 700;">${data.my_button.toUpperCase()}</span> (+${data.my_score})
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        ${currentCall ? currentCall.opponent : "Opponent"}: <span style="color: ${theirColor}; font-weight: 700;">${data.their_button.toUpperCase()}</span> (+${data.their_score})</p>
+    `;
+
+    // Reset after 3 seconds (capture call_id to avoid clearing a newer call)
+    const finishedCallId = data.call_id;
+    setTimeout(() => {
+        if (currentCall && currentCall.call_id === finishedCallId) {
+            document.getElementById("call-panel").style.display = "none";
+            currentCall = null;
+        }
+    }, 3000);
+}
+
+// --- Timers ---
+function startGameTimer() {
+    const el = document.getElementById("game-timer");
+    gameTimerInterval = setInterval(() => {
+        const remaining = Math.max(0, gameTimerEnd - Date.now() / 1000);
+        const m = Math.floor(remaining / 60);
+        const s = Math.floor(remaining % 60);
+        el.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        if (remaining <= 0) clearInterval(gameTimerInterval);
+    }, 200);
+}
+
+function startCallTimer(timerEnd) {
+    const el = document.getElementById("call-timer");
+    clearInterval(callTimerInterval);
+    callTimerInterval = setInterval(() => {
+        const remaining = Math.max(0, timerEnd - Date.now() / 1000);
+        el.textContent = `${Math.ceil(remaining)}s`;
+        if (remaining <= 0) clearInterval(callTimerInterval);
+    }, 200);
+}
+</script>
+</body>
+</html>

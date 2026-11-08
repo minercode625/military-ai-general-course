@@ -1,0 +1,31 @@
+실습 3  AI 사진 탐지기에 넣어 보기 (10분, 브라우저, 가입 없음)
+
+[사이트] https://star092304-ai-real-image-detector.hf.space/
+Hugging Face 공개 데모 "AI vs Real Image Detector" — 모델 3개 합산 + 잡음 · 주파수 · 메타데이터 분석.
+무료 데모라 처음 열 때 1분쯤 걸리거나 잠들어 있을 수 있다. 안 열리면 대체 사이트(아래).
+
+[순서]
+1. 접속 → "Drop image here or click to browse"에 zip의 docs/탐지용사진/ 사진 하나
+2. "Analyze Image" (10~20초)
+3. FORENSIC VERDICT(판정: REAL / UNCERTAIN / AI)와 "AI PROBABILITY NN%"를 기록표에
+4. "Clear" → 다음 사진. AI 5장 + 얼굴 바꾼 1장(실습 2b, 바탕화면 FaceFusion_output 의 jpg) + 진짜 2장 = 8장
+
+[기록표]  (판정 / AI 확률)                    [2026-10-12 실측(참고)]
+ ai_1.png   :                                  UNCERTAIN / 51%
+ ai_2.png   :                                  UNCERTAIN / 47%
+ ai_3.png   :                                  UNCERTAIN / 47%
+ ai_4.png   :                                  UNCERTAIN / 47%
+ ai_doc.png :                                  UNCERTAIN / 51%
+ real_1.jpg :                                  PROBABLY AI / 65%   ← 진짜 사진을 AI로
+ real_2.jpg :                                  PROBABLY REAL / 36%
+ 얼굴 바꾼 1장:                                UNCERTAIN / 53%     (2026-10-20, FaceFusion face_1 → face_2)
+ 8장 중 맞힌 수:        (UNCERTAIN은 "모른다"로 센다)
+
+[읽는 법]
+- %는 확률이지 판결이 아니다. 40~60%는 "모른다".
+- 실측에서는 AI 5장을 하나도 잡지 못했고 진짜 1장을 AI라 했다. FaceFusion으로 얼굴 바꾼 사진도 "애매"(53%)였다. 탐지기는 자기가 배운 생성 모델에만 강하다.
+- 메타데이터 "없음"은 AI의 증거가 아니다(메신저가 지운다). 중요한 판단은 출처(실습 4)를 찾는다.
+
+[대체 사이트] (같은 방식: 사진 올리기 → 결과. 당일 상태는 강사가 확인)
+ https://huggingface.co/spaces/emilyl613/ai-image-detector
+ https://huggingface.co/spaces/Lynote/free-ai-image-detector

@@ -1,0 +1,45 @@
+집에서 이어하기 — 내 데이터로 다시 하기 · 어댑터 다시 쓰기
+
+[준비]
+개인 Google 계정, Colab 무료(T4), 배포 zip. 가상 데이터만. 실제 민원 · 실명 · 업무 규정은 넣지 않는다.
+
+[1. 내 FAQ 100쌍 만들기]
+가상의 조직 하나(동호회 · 가게 · 가상 부서)를 정한다. 자주 받는 질문 10가지를 고르고, 질문마다 표현 10개를 쓴다.
+답은 모양 하나로 통일한다(인사 / 확인 / 안내 / 다음 단계 / 맺음말처럼). 10쌍은 학습에 넣지 않고 시험용으로 뺀다.
+"없는 질문 → 죄송합니다, 그 내용은 안내드릴 수 없습니다" 쌍도 10개쯤 넣는다 — 오늘 실습 6·7에서 본 "지어내기"를 줄이는 가장 쉬운 방법.
+초안은 claude.ai 등에 "이 FAQ 답 하나를 질문 10가지 표현으로 바꿔 줘"라고 시켜 받고(1차시), 사람이 검수한다.
+틀린 답 · 개인정보는 넣지 않는다.
+
+[2. JSONL로 저장]
+메모장으로 한 줄에 한 쌍:  {"q": "질문", "a": "답"}
+줄바꿈은 \n 으로. 파일 이름 my_data.jsonl, UTF-8로 저장. docs/data/service_200.jsonl 이 견본.
+
+[3. 셀 3 바꾸기]
+셀 3의 SERVICE = [ ... ] 전체를 지우고 아래로 바꾼다(RULES_QA는 빈 목록으로):
+    import json
+    from google.colab import files
+    up = files.upload()                                   # my_data.jsonl 을 고른다
+    name = next(iter(up))
+    SERVICE = [json.loads(l) for l in up[name].decode("utf-8").splitlines() if l.strip()]
+    RULES_QA = []
+    print(len(SERVICE), "쌍")
+그다음 셀 4 → 5 → 6 순서. 셀 2의 TEST_STYLE / TEST_KNOW 를 내 시험용 10쌍의 질문으로 바꾸면 전후 비교가 내 데이터로 된다.
+
+[4. 실험 — 하나씩 바꾼다]
+- EPOCHS = 1 / 3 / 5 : 손실 마지막 값과 시험 답이 어떻게 달라지나. 0.2 아래로 떨어지면 외우는 중.
+- REPEAT : 내 이름 쌍을 1번만 넣으면 외우나.
+- LORA_R = 8 / 32 : 어댑터 크기(MB)와 답의 차이.
+- 더 큰 모델: 셀 1의 MODEL_ID 를 바꾸고 load_in_4bit=True (예: 7~8B 모델은 4비트로만 T4에 올라간다).
+  모델마다 대화 템플릿 표시가 다르므로 셀 5의 instruction_part / response_part 를 그 모델 것으로 바꿔야 한다.
+
+[5. 어댑터 다시 쓰기 — 다음 세션에서]
+셀 1을 돌린 뒤, 왼쪽 폴더 아이콘 > 업로드로 mint_lora.zip 을 올리고 새 셀에:
+    import zipfile; zipfile.ZipFile("mint_lora.zip").extractall("mint_lora")
+    model, tokenizer = FastLanguageModel.from_pretrained(model_name="mint_lora", max_seq_length=MAX_LEN, dtype=None, load_in_4bit=False)
+    FastLanguageModel.for_inference(model)
+    print(ask("상담원 이름이 뭐예요?"))
+원래 모델(kakaocorp/...)은 자동으로 다시 내려받아 붙는다. 셀 10(대화)을 바로 쓸 수 있다.
+
+[한 바퀴의 완료 기준]
+시험용 10쌍의 학습 전 · 후 답 표 하나, 손실 그래프 하나, 어댑터 zip 하나, "모르는 질문 3개"에 뭐라 했는지 한 줄.
+잘 안 되면 설정보다 데이터의 모양과 표현 수를 먼저 본다.

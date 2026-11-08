@@ -1,0 +1,59 @@
+# 집에서 이어하기 — 내 물체 하나로 데이터셋을 만들고 학습하기
+
+오늘 노트북(Drive에 올린 것)을 그대로 쓴다. 바뀌는 것은 데이터셋뿐이다.
+
+## 1) 물체 정하기와 사진 찍기 (30분)
+- 80종에 없는 물체 하나: 명함, 머그컵, 특정 로고, 리모컨 종류, 사무용품 등
+- 휴대폰으로 30장. 조명(밝은 곳·어두운 곳) · 각도(위·옆) · 배경(책상·바닥) · 거리(가까이·멀리)를 바꿔 가며
+- 물체가 없는 사진도 3장쯤 찍는다(배경 사진. 잘못 잡기를 줄여 준다)
+- 사람 얼굴·업무 문서는 찍지 않는다
+
+## 2) 라벨링 (30분)
+- makesense.ai → 30장 올리기 → Object Detection → 라벨 이름(영문) → 상자 그리기
+- 배경 사진은 상자 없이 그대로 둔다
+- Actions → Export Annotations → YOLO format → zip 내려받기
+
+## 3) 폴더 구조 만들기 (10분)
+PC에서 아래 구조로 정리한다. 사진 25장은 train, 5장은 val. txt는 같은 이름으로 같은 쪽에.
+```
+mydata/
+  images/train/  (사진 25장)
+  images/val/    (사진 5장)
+  labels/train/  (txt 25개, 배경 사진은 txt 없음)
+  labels/val/    (txt 5개)
+  mydata.yaml
+```
+mydata.yaml 의 내용 (메모장으로 만든다. 이름은 내 라벨 이름으로):
+```
+path: /content/mydata
+train: images/train
+val: images/val
+names:
+  0: mug
+```
+
+## 4) Colab에 올리고 학습 (20분)
+- mydata 폴더를 zip으로 묶어 Colab 왼쪽 파일 패널에 올린 뒤, 새 셀에 다음을 넣고 ▶:
+```
+import zipfile; zipfile.ZipFile("mydata.zip").extractall("/content")
+```
+- 셀 8의 data="signature.yaml" 을 data="/content/mydata/mydata.yaml" 로, name="signature" 를
+  name="mydata" 로 바꾸고 ▶ (EPOCHS = 30 추천)
+- 셀 9의 BEST 경로가 runs/mydata/weights/best.pt 가 되도록 셀 8의 BEST 줄도 같이 바뀐다(자동).
+  VAL_DIR 대신 "/content/mydata/images/val" 을 쓰도록 셀 9 첫 줄을 바꾼다:
+```
+val_imgs = sorted(glob.glob("/content/mydata/images/val/*.jpg"))
+```
+
+## 덤) 분할 다시 해 보기 (5분)
+셀 4b의 SEG_PHOTO 를 직접 찍은 사물 사진 이름으로 바꾸고 ▶. 윤곽 면적과 상자 면적의 차이가 큰 물체(가늘거나 비스듬한 것)를 찾아본다.
+분할 모델 학습도 셀 8과 같은 방식이지만 정답이 윤곽(다각형)이라 라벨링이 훨씬 오래 걸린다.
+
+## 완료 기준
+- 검증 5장에서 학습 전 모델은 못 찾고 학습 후 모델은 찾는 그림 5장
+- mAP50 숫자 하나
+- 잘 안 되면: 가림 / 작음 / 어둠 / 모르는 것 중 무엇인지 적고, 그 조건의 사진 10장을 더 찍어 다시
+
+## 규칙
+- 개인 계정, 직접 찍은 사물 사진만. Colab은 외부 서버다.
+- best.pt 와 mydata 폴더가 산출물이다. 둘 다 보관한다.

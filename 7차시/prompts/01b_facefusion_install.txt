@@ -1,0 +1,31 @@
+실습 0-2  FaceFusion 설치 — 내 PC에서 도는 얼굴 바꾸기 (5분, Windows, 관리자 권한 불필요)
+
+[받을 것]  강사가 공유한 Google Drive 폴더 "7차시_FaceFusion_설치"에서 전부, 같은 폴더(예: 다운로드)에:
+  FaceFusion-Setup-3.9.1.exe
+  FaceFusion-Setup-3.9.1-1.bin
+  합계 약 1.7 GB. 수업 전날 또는 아침에 미리 받아 둔다(16명이 수업 중에 받으면 회선이 막힌다).
+  안에 든 것: 공개 도구 FaceFusion 3.9.1(github.com/facefusion/facefusion) + Python 3.12 + FFmpeg + 얼굴 모델 1.8 GB. 인터넷 없이 돈다.
+
+[순서]
+1. FaceFusion-Setup-3.9.1.exe 더블클릭.
+   "Windows의 PC 보호" 파란 창이 뜨면: 추가 정보 → 실행. (서명 없는 파일이라 SmartScreen이 막는 것. 바이러스 경고가 아니다)
+2. 설치 언어 한국어 → 다음 → 설치. 설치 위치는 내 계정 폴더(C:\Users\이름\AppData\Local\FaceFusion). 2~4분.
+3. "마침"을 누르면 검은 창(명령 창)이 뜨고, 1~2분 뒤 브라우저가 http://127.0.0.1:7860 을 연다.
+   기대 화면: 왼쪽 위 빨간 "FaceFusion 3.9.1", 가운데 SOURCE · TARGET · OUTPUT, 오른쪽 PREVIEW.
+4. 검은 창은 닫지 않는다(닫으면 FaceFusion이 꺼진다). 브라우저 탭은 닫아도 다시 열면 된다(주소 127.0.0.1:7860).
+5. 다음부터는 바탕화면의 FaceFusion 아이콘으로 연다.
+
+[안 될 때]
+| 증상 | 조치 |
+|---|---|
+| "Windows의 PC 보호" 창에 "실행" 버튼이 없다 | "추가 정보"를 먼저 누른다 → 실행이 나타난다 |
+| 설치가 "디스크 1 … .bin 을 찾을 수 없습니다" | .bin 파일을 같은 폴더에 받지 않았다. 다시 받아 같은 폴더에 둔다 |
+| 검은 창이 바로 닫힌다 / 빨간 글씨 | 시작 메뉴 → FaceFusion (CPU only) 로 연다. 그래도 안 되면 손을 든다(2부는 옆 사람 PC로) |
+| 브라우저가 안 열린다 | 직접 브라우저 주소창에 127.0.0.1:7860 |
+| "포트가 사용 중" | 이미 FaceFusion 창이 하나 떠 있다. 그 창을 쓴다 |
+| 화면이 영어다 | 정상. 실습에 쓰는 칸은 SOURCE · TARGET · START · OUTPUT · PROCESSORS 다섯 개뿐 |
+
+[왜 설치형인가]
+Colab 사용 제한에 "creating deepfakes(딥페이크 생성)"가 금지 항목으로 있고, 무료 웹 데모는 화질이 낮고 16명이 줄을 선다.
+공개 도구를 내 PC에서 돌리면 올린 사진이 밖으로 나가지 않는다. 그래도 넣는 얼굴은 zip의 AI 가상 인물뿐이다.
+수업이 끝나면 PC 초기화로 사라진다. 직접 지우려면 설정 > 앱 > FaceFusion 제거.

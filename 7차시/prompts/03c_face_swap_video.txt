@@ -1,0 +1,38 @@
+실습 2c  영상 얼굴 바꾸기 — FaceFusion + 보정 (7분)
+
+[도구] 실습 2b와 같은 FaceFusion 창. 영상은 사진의 묶음(4초 × 12장 = 48장)이라 48장을 한 장씩 바꾼다.
+
+[올려도 되는 영상 — 이것뿐]
+zip의 docs/가상얼굴/video_1.mp4 (face_2 인물), video_2.mp4 (face_5 인물). 4초 · 12fps · 512px, 둘 다 AI 가상 인물.
+본인 · 지인 · 동료 · 연예인 · 정치인의 영상은 넣지 않는다. 휴대폰으로 찍은 영상도 넣지 않는다.
+
+[순서]
+1. ② TARGET 칸 오른쪽 위 × 를 눌러 사진을 지우고, 칸을 다시 클릭 → video_1.mp4 (또는 video_2.mp4). SOURCE(넣을 얼굴)는 그대로 둔다(영상 속 인물과 다른 사람이면 됨).
+   오른쪽 PREVIEW에 첫 장면이, 그 아래 PREVIEW FRAME 막대가 생긴다(끌면 장면이 바뀐다).
+2. 왼쪽 ③ PROCESSORS에서 face_enhancer 도 체크(face_swapper + face_enhancer 두 개가 빨갛게). 보정 모델 gfpgan_1.4가 흐린 얼굴을 다시 그린다.
+3. ④ START → TERMINAL에 "analysing: 48/48" 다음 "processing: 48/48" → 2~5분(노트북 70초, 2코어 빌드 서버 7분. 보정을 끄면 절반).
+4. ⑤ OUTPUT에서 재생. 파일은 바탕화면 FaceFusion_output(임의의 8글자.mp4).
+5. 시간이 남으면 face_enhancer 체크를 풀고 한 번 더(약 2배 빠르다). 보정 전후를 비교한다.
+
+[기대 출력]
+바탕 영상의 머리 · 옷 · 배경 · 움직임은 그대로, 얼굴만 넣은 얼굴로 바뀐 4초 영상. (2026-10-20 실측: face_1 → video_1, M1 노트북 보정 포함 70~72초 · 보정 없이 28초, Windows 2코어 CPU 420초)
+
+[기록표]
+- 바탕 video_[ ]  +  넣은 얼굴 face_[ ]
+- 멈춰 놓고 볼 때 vs 재생할 때 — 어느 쪽이 더 가짜 티가 나나:  멈춤 / 재생
+- 흔들리는 곳 하나 (얼굴 경계 / 눈 · 입 / 고개 돌릴 때 / 피부색 깜박임):  [              ]
+- 보정(face_enhancer)을 끄면 무엇이 달라지나:  [              ]
+
+[안 될 때]
+| 화면에 뜬 말 | 조치 |
+|---|---|
+| TARGET에 영상이 안 올라간다 | × 로 먼저 사진을 지웠는지 확인. mp4만 된다 |
+| 5분 넘게 "processing" | CPU만 쓰는 PC. 기다리거나, face_enhancer 를 끄고 다시 START, 또는 video_2 |
+| 결과 영상이 안 보인다 | FaceFusion_output 폴더에서 직접 연다(Windows 미디어 플레이어) |
+| "Error" 빨간 글씨 | TERMINAL 마지막 줄을 적고 손을 든다. 2부 나머지는 옆 사람 화면으로 |
+
+[메모] 데모는 48장을 한 장씩 바꾸고 경계를 뭉갠다. 그래서 프레임마다 조금씩 다르게 바뀌어 재생하면 얼굴이 떨린다 — 영상 딥페이크를 눈으로 잡는 첫 단서.
+실습 3의 탐지기는 사진용이다. 영상은 넣지 않는다(넣고 싶으면 재생 중 캡처한 한 장을).
+
+[대체 — FaceFusion이 안 되는 PC]  (브라우저 공개 데모 FaceFlux, CPU, 가입 없음. Input Video = 영상, Reference Image = 넣을 얼굴, Generate Morph. 결과가 FaceFusion보다 흐리다)
+ https://nihalgazi-faceflux-face-swapper.hf.space/

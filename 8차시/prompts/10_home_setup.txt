@@ -1,0 +1,63 @@
+# 집에서 이어하기 · 실습실 PC 정리  [정리]
+
+## A. 실습실 PC에서 나가기 전 5줄 (공용 PC)
+1. Claude Code 입력창에서  /logout
+2. 터미널에서  gh auth logout   (질문에 Y)
+3. 브라우저에서 github.com · claude.ai 로그아웃
+4. 브라우저의 저장된 비밀번호·자동완성 삭제 (설정 → 비밀번호)
+5. 내 주소 https://아이디.github.io 를 휴대폰에 메모
+
+## B. 내 PC에 설치
+
+### Windows (PowerShell)
+```
+winget install --id Git.Git -e --source winget
+winget install --id GitHub.cli -e --source winget
+irm https://claude.ai/install.ps1 | iex
+```
+→ 터미널을 닫고 새로 연 뒤
+```
+git --version
+gh --version
+claude --version
+gh auth login
+git config --global user.name "닉네임"
+git config --global user.email "가입한이메일@example.com"
+```
+
+### Mac (터미널: Cmd + Space → Terminal)
+```
+curl -fsSL https://claude.ai/install.sh | bash
+brew install gh
+```
+- Git은 터미널에 `git` 을 치면 설치 안내가 뜬다.
+- Homebrew(brew)가 없으면 https://brew.sh 의 한 줄 명령을 먼저 실행.
+→ 새 터미널에서 `gh auth login`, git 이름표 두 줄 (위와 같음)
+
+### 터미널이 부담스러우면
+- Claude 데스크톱 앱(Windows·Mac): https://claude.com/download
+  같은 Team 계정으로 로그인 → 폴더를 열고 채팅처럼 쓴다. Claude Code가 들어 있다.
+
+## C. 오늘 만든 저장소 받아오기 (clone)
+```
+gh repo clone 아이디/아이디.github.io
+cd 아이디.github.io
+claude
+```
+첫 메시지:
+```
+이 폴더가 어떤 상태인지 요약해줘. index.html의 구성도 알려줘.
+```
+
+## D. 이어서 고치고 올리기
+```
+최근 활동에 한 줄을 추가하고, 브라우저로 확인한 뒤 커밋·push 해줘.
+```
+→ 1~2분 뒤 https://아이디.github.io 새로고침
+
+## E. 이번 주에 해볼 것
+- 페이지에 항목 하나 추가하고 push까지 혼자 한 바퀴
+- "더 해볼 것"(페이지 나누기 · 문의 폼 · 내용 파일 분리 · 내 도메인) 중 하나를
+  Shift+Tab 계획(plan) 모드에서 "어떻게 할 건지 먼저 보여줘"라고 물어보기
+- 옆사람 주소를 열어 좋은 점 한 줄 전하기
+모두 개인 계정 · 가상 프로필로.

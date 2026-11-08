@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>실습: AI 죄수의 딜레마 — 학생 안내문</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+  body{max-width:46em;margin:2em auto;padding:0 1em;font-family:-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.55}
+  table{border-collapse:collapse;margin:0.6em 0}th,td{border:1px solid #bbb;padding:4px 10px;text-align:left}
+  code{background:#f3f3f3;padding:1px 4px}pre{background:#f3f3f3;padding:10px;overflow-x:auto}
+  blockquote{border-left:4px solid #ccc;margin:0.6em 0;padding:0.2em 1em;color:#444}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">실습: AI 죄수의 딜레마 — 학생 안내문</h1>
+</header>
+<h1 id="실습-ai-죄수의-딜레마--팀-대항전">실습: AI 죄수의 딜레마 — 팀
+대항전</h1>
+<p>여러분이 작성한 <strong>전략 프롬프트</strong>가 AI 협상가가 되어
+다른 팀과 협상하고, 초록/빨강 버튼을 선택합니다. <strong>프롬프트를
+얼마나 잘 쓰느냐가 곧 점수입니다.</strong></p>
+<h2 id="게임-규칙">게임 규칙</h2>
+<ul>
+<li>제한시간 <strong>6분</strong>, 자유롭게 다른 팀에게 통화를 걸 수
+있음 (동시 통화 불가)</li>
+<li>통화당 <strong>40초</strong> 동안 두 팀의 AI가 자동으로 대화 (AI가
+생각한 뒤 답하므로 약 5초에 한 마디, 통화당 7~8마디)</li>
+<li>대화가 끝나면 각 팀의 AI가 <strong>초록 / 빨강</strong> 버튼
+선택:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>나 \ 상대</th>
+<th>초록</th>
+<th>빨강</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>초록</strong></td>
+<td>나 +3 / 상대 +3</td>
+<td>나 +0 / 상대 +5</td>
+</tr>
+<tr>
+<td><strong>빨강</strong></td>
+<td>나 +5 / 상대 +0</td>
+<td>나 +1 / 상대 +1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>같은 팀과 여러 번 통화 가능 — <strong>AI는 상대의 과거 선택 기록을
+기억합니다</strong> (반복 게임!)</li>
+<li>단, <strong>직전에 통화한 팀과 연속으로는 불가</strong> — 둘 중 한
+팀이 다른 팀과 통화한 뒤에 다시 걸 수 있음 (통화 가능한 팀이 그 팀뿐이면
+예외)</li>
+<li>최종 점수가 가장 높은 팀 승리</li>
+</ul>
+<hr />
+<h2 id="ai-준비-팀에서-한-명-58분">AI 준비 (팀에서 한 명, 5~8분)</h2>
+<p>우리 팀 AI는 Google Colab의 GPU에서 돌아갑니다. PC에 설치할 것은
+없습니다.</p>
+<ol type="1">
+<li>Colab(<a
+href="https://colab.research.google.com">https://colab.research.google.com</a>)에
+로그인 → <strong>파일 &gt; 노트 업로드</strong> → 배포받은
+<code>dilemma_ai.ipynb</code> 선택</li>
+<li><strong>① AI 준비</strong> 셀의 ▶ 를 누름. 5단계가 차례로 지나갑니다
+(설치 → 모델 받기 → GPU에 올리기 → 주소 만들기)</li>
+<li>끝에 나오는 <code>https://....trycloudflare.com</code>
+<strong>주소를 복사</strong></li>
+<li>이 Colab 탭은 <strong>게임이 끝날 때까지 닫지 않습니다</strong></li>
+</ol>
+<blockquote>
+<p>"GPU 없음"이 나오면: 메뉴 <strong>런타임 &gt; 런타임 유형 변경 &gt;
+T4 GPU &gt; 저장</strong> 후 ① 셀을 다시 실행합니다. 주소를 잃어버렸으면
+<strong>② 주소 다시 보기</strong> 셀을 실행합니다.</p>
+</blockquote>
+<hr />
+<h2 id="수업-중-진행">수업 중 진행</h2>
+<ol type="1">
+<li>배포받은 <strong><code>게임접속.html</code></strong> 을 더블클릭
+(Chrome 권장). 또는 주소창에 <code>http://34.47.83.192:8080</code>
+입력</li>
+<li><strong>팀명</strong>: 칠판에 지정된 자기 팀명을 정확히 입력 (오타
+주의 — 팀명이 점수 키입니다)</li>
+<li><strong>AI 모델</strong>: 노트북에서 받은 모델과 같은 것을 선택
+(기본 <strong>gemma4:e4b</strong>, 사고 모드)</li>
+<li><strong>AI 주소</strong>: Colab에서 복사한 주소를 붙여넣기</li>
+<li><strong>전략 프롬프트</strong> 작성 → <strong>Join
+Game</strong></li>
+<li>교수가 시작하면 자동으로 게임 화면 전환</li>
+<li><strong>게임 중 전략 수정 가능</strong>: 통화 중이 아닐 때 상단
+<strong>[전략 수정]</strong> 버튼 → 수정하는 동안에는 통화를 걸거나 받을
+수 없음 → <strong>저장 후 복귀</strong>하면 다음 통화부터 새 전략 적용.
+결과를 보고 전략을 계속 개선하세요 — 이게 이번 실습의 핵심입니다!</li>
+</ol>
+<h3 id="연습-모드-게임-시작-전-혼자-전략-시험">연습 모드 (게임 시작 전,
+혼자 전략 시험)</h3>
+<ol type="1">
+<li>입장 화면에서 AI 주소를 붙여 넣은 뒤 <strong>[연습 모드 — 서버 없이
+전략 테스트]</strong> 버튼</li>
+<li><strong>A팀</strong> = 내 전략 (입장 화면에 쓴 내용이 자동으로
+들어옴), <strong>B팀</strong> = 상대 팀이 쓸 법한 전략을 상상해서 직접
+작성</li>
+<li><strong>[통화 시작]</strong> → 두 AI가 대화하고 각자 버튼을 선택 →
+점수 표시</li>
+<li>라운드를 반복하면 <strong>AI가 과거 선택 기록을 기억</strong>합니다
+— 실전과 동일한 반복 게임</li>
+<li>여러 유형의 상대(공격적/우호적/거짓말쟁이…)를 직접 만들어 붙여보고,
+내 전략을 고쳐가며 다시 시도하세요</li>
+</ol>
+<blockquote>
+<p>대화 내용을 보면 내 지시가 실제로 어떻게 작동하는지(무시되는지!)
+보입니다.</p>
+</blockquote>
+<h3 id="전략-프롬프트-힌트">전략 프롬프트 힌트</h3>
+<p>AI에게 주는 지시문입니다. 예시 요소:</p>
+<ul>
+<li>협상 태도: "협력을 약속하라", "위협하라", "동정심에 호소하라"</li>
+<li>버튼 규칙: 어떤 조건에서 초록/빨강을 누를지 명시</li>
+<li>조건 분기: "상대 말투가 공격적이면 …, 우호적이면 …"</li>
+<li>대화 스타일: <strong>"한국어로만, 1문장으로 짧게 대화하라"</strong>
+← 강력 추천</li>
+<li>심리전: 거짓 약속? 진실한 협력? — 단, 상대 AI도 기록을 기억함</li>
+</ul>
+<p><strong>수업 포인트</strong>: 애매한 지시("잘 협상해줘")와 구체적
+지시(조건·규칙 명시)의 결과 차이를 직접 확인하세요.</p>
+<h3 id="ai가-실제로-받는-시스템-프롬프트-전체-공개">AI가 실제로 받는
+시스템 프롬프트 (전체 공개)</h3>
+<p>여러분의 전략 프롬프트는 아래 시스템 프롬프트의 맨 끝
+<code>[Your Strategy]</code> 자리에 그대로 들어갑니다:</p>
+<pre class="text"><code>You are playing an iterated Prisoner&#39;s Dilemma game.
+After a conversation with your opponent, you must choose green or red.
+Scoring: green+green = both get +3, green+red = green gets 0 and red gets +5, red+red = both get +1.
+During conversation, respond with JSON: {&quot;message&quot;: &quot;your message&quot;}
+When asked to choose a button, respond with JSON: {&quot;message&quot;: &quot;final words&quot;, &quot;button&quot;: &quot;green&quot; or &quot;red&quot;}
+Keep messages short (1-2 sentences).
+This is a live negotiation, not a monologue: react to the opponent&#39;s last message — answer their questions and address their proposals before adding your own point. Never repeat a sentence you already said.
+Do not invent past rounds — rely only on the interaction history provided in this prompt. If none is provided, this is your first conversation with this opponent.
+Always speak Korean. 모든 대화는 반드시 한국어로만 한다. 상대가 다른 언어를 쓰더라도 한국어로 답한다.
+
+Previous interactions with {상대팀명}:      ← 이 블록은 같은 팀과 2번째 통화부터 자동 추가
+- Round 1: They chose green
+- Round 2: They chose red
+{상대팀명} cumulative: green 1 times, red 1 times
+
+[Your Strategy]
+{여러분이 작성한 전략 프롬프트}</code></pre>
+<p><strong>전략 작성에 활용하세요</strong>:</p>
+<ul>
+<li>게임 규칙·점수·출력 형식은 AI가 이미 알고 있음 → 전략에 다시 쓸 필요
+없음. <strong>언제 초록/빨강을 누를지, 어떤 태도로 협상할지</strong>에
+집중</li>
+<li>상대의 과거 버튼 기록(라운드별 + 누적)이 자동 제공됨 → "상대가 red를
+누른 적 있으면 …" 같은 조건 분기가 실제로 작동</li>
+<li>버튼 선택은 대화가 끝난 뒤 별도 요청으로 이뤄짐 → "버튼을 고를 때는
+…" 형태의 지시도 가능</li>
+</ul>
+<hr />
+<h2 id="문제-해결">문제 해결</h2>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"AI 연결 실패"</td>
+<td>Colab 탭이 열려 있는지 확인 → <strong>② 주소 다시 보기</strong> 셀
+실행 → 나온 주소를 AI 주소 칸에 다시 붙여넣기</td>
+</tr>
+<tr>
+<td>"모델이 없습니다"</td>
+<td>입장 화면의 AI 모델을 노트북에서 받은 모델과 같게 선택</td>
+</tr>
+<tr>
+<td>Colab에 "GPU 없음"</td>
+<td><strong>런타임 &gt; 런타임 유형 변경 &gt; T4 GPU &gt; 저장</strong>
+후 ① 셀 다시 실행</td>
+</tr>
+<tr>
+<td>Colab 런타임이 끊김</td>
+<td>① 셀을 다시 실행 → <strong>주소가 바뀌므로</strong> 새 주소를 AI
+주소 칸에 붙여 넣고 재입장</td>
+</tr>
+<tr>
+<td>연결이 끊김 / 새로고침함</td>
+<td><strong>가만히 있으면 자동 재접속</strong> — 점수 유지됨. 진행
+중이던 통화 1건만 무효</td>
+</tr>
+<tr>
+<td>팀명을 잘못 입력하고 들어감</td>
+<td>주소창 맨 뒤에 <code>?fresh=1</code> 붙이고 Enter → 올바른 팀명으로
+재입장</td>
+</tr>
+<tr>
+<td>AI 답이 10초보다 훨씬 느림</td>
+<td>② 셀로 GPU 사용 여부 확인. GPU 메모리 사용이 0이면 ① 셀 다시
+실행</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="참고-내-pc의-ollama로-하는-경우">참고: 내 PC의 Ollama로 하는
+경우</h2>
+<p>Colab 없이 자기 PC에 설치한 Ollama를 쓸 수도 있습니다. AI 주소 칸을
+<strong>비워 두면</strong> 이 PC의
+Ollama(<code>http://127.0.0.1:11434</code>)에 연결합니다.</p>
+<ul>
+<li>모델: <code>ollama pull gemma4:e4b</code> (약 7GB) 또는
+<code>ollama pull gemma4:12b</code> (약 8GB)</li>
+<li>Ollama를 외부 접속 허용으로 실행해야 합니다. Windows 명령 프롬프트:
+<code>set OLLAMA_ORIGINS=* &amp;&amp; ollama serve</code> / macOS
+터미널: <code>OLLAMA_ORIGINS="*" ollama serve</code></li>
+<li>이 방식에서는 반드시 <code>게임접속.html</code> 파일을 더블클릭해서
+엽니다 (주소창 입력 방식은 Chrome 보안정책 때문에 작동하지 않음)</li>
+</ul>
+</body>
+</html>

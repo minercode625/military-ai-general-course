@@ -1,0 +1,20 @@
+안 될 때 — 증상별 조치 (5분 규칙은 그대로)
+
+화면에 뜬 말                                   | 원인                           | 조치
+AssertionError: GPU 없음 (셀 1)                | 런타임 유형이 CPU              | 런타임 > 런타임 유형 변경 > T4 > 저장 → 셀 1 다시
+NameError: name 'chat' (셀 2·3)                | 셀 1 안 돌림 / 다시 시작됨     | 셀 1부터 다시
+셀 1이 "모델:" 뒤에서 오래 멈춤                 | 4GB 내려받는 중                | 3분까지 기다린다. 5분 넘으면 런타임 > 세션 다시 시작 → 셀 1
+셀 2 "공격>" 칸이 안 보인다                    | 출력이 길어 접힘               | 출력 영역을 스크롤, 또는 셀 왼쪽 ■ 후 다시 ▶
+셀 2에서 AI 답이 영어 · 되풀이                 | 작은 모델의 버릇               | 그대로 기록. 질문을 짧고 분명하게
+"런타임 연결이 해제되었습니다"                 | 유휴 90분 또는 한도            | 런타임 > 다시 연결 → 셀 1부터
+탐지 사이트가 안 열린다 / "Loading"만          | 무료 데모가 잠듦               | 1분 기다렸다 새로고침. 그래도 안 되면 04_detector.txt 의 대체 사이트
+탐지 사이트가 영어 오류를 낸다                 | 파일이 너무 큼 / 형식          | PNG · JPG 20MB 이하. docs/탐지용사진/ 의 파일 그대로
+Content Credentials 결과가 안 바뀐다            | 꼬리표 없는 파일               | 정상("없음"). 샘플 사진으로 "있음" 화면을 본다
+Detect Fakes 다음으로 안 넘어간다               | 설문 미입력                    | 설문 2문항을 모두 고른다
+FaceFusion 설치 "Windows의 PC 보호"            | 서명 없는 설치 파일(SmartScreen)| 추가 정보 → 실행
+FaceFusion 설치 ".bin 을 찾을 수 없습니다"      | .bin 을 같은 폴더에 안 받음      | .exe 와 .bin 전부 같은 폴더에
+FaceFusion 검은 창이 바로 닫힘                  | DirectML 오류 등                | 시작 메뉴 → FaceFusion (CPU only)
+FaceFusion START 눌러도 반응 없음               | 검은 창이 닫혀 있음             | 바탕화면 FaceFusion 으로 다시 연다
+FaceFusion "no face detected"                  | 얼굴을 못 찾음                  | docs/가상얼굴/ 의 다른 사진으로
+FaceFusion 영상이 5분 넘게 processing           | CPU만 쓰는 PC                   | face_enhancer 끄고 다시, 또는 video_2
+FaceFusion 이 아예 안 되는 PC                   | —                               | 03b · 03c 의 대체 사이트(브라우저 데모)로

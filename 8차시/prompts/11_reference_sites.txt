@@ -1,0 +1,53 @@
+# 무료 레퍼런스 사이트  [4부]
+
+## 템플릿 (완성된 HTML 뼈대)
+| 사이트 | 무엇 | 조건 |
+|---|---|---|
+| HTML5 UP  https://html5up.net | 반응형 HTML 템플릿 40여 종. 완성도 높음 | 무료, CC BY 3.0 — 하단 출처 표기(credit) 유지 |
+| TemplateMo  https://templatemo.com | HTML 템플릿 600여 종, 로그인 없이 다운로드 | 무료, 개인·상업 사용 가능 |
+| Start Bootstrap  https://startbootstrap.com | Bootstrap 기반 템플릿·컴포넌트 | 무료 다수(MIT), 일부 유료 |
+| Free CSS  https://www.free-css.com | 여러 출처의 템플릿 모음 | 템플릿마다 라이선스 확인 |
+
+## 영감 (구성·분위기 참고)
+| 사이트 | 무엇 |
+|---|---|
+| One Page Love  https://onepagelove.com | 한 페이지 사이트 사례 9천여 개. 포트폴리오 카테고리 |
+| Land-book  https://land-book.com | 랜딩 페이지 갤러리 |
+
+## 이미지
+| 사이트 | 무엇 | 조건 |
+|---|---|---|
+| Unsplash  https://unsplash.com | 고화질 사진. 주소만 복사해 배경으로 | 무료, 상업 사용 가능, 출처 표기 권장 |
+| Pexels  https://www.pexels.com | 사진·짧은 영상 | 무료 |
+- 내 사진·타인 사진·검색해서 찾은 사진은 넣지 않는다 (공개·초상권·저작권).
+
+## 글꼴 · 아이콘 · 색
+| 사이트 | 무엇 | 조건 |
+|---|---|---|
+| Google Fonts  https://fonts.google.com | 웹 글꼴 (Noto Sans KR 등) | 무료, 링크 한 줄 |
+| Pretendard  https://github.com/orioncactus/pretendard | 한국어 화면용 글꼴 | 무료(OFL), CDN 한 줄 |
+| Font Awesome  https://fontawesome.com | 아이콘 2천여 개 | 무료 버전 있음 |
+| Coolors  https://coolors.co | 색 조합 생성기 (5색 한 세트) | 무료 |
+
+## Claude에게 레퍼런스를 주는 문장
+```
+https://html5up.net/ 의 "Story" 템플릿처럼 상단을 화면 가득 큼직하게,
+아래 카드는 지금대로 유지해줘.
+```
+```
+https://onepagelove.com/ 에서 개인 포트폴리오 사례를 하나 골라
+그 구성(섹션 순서)만 참고해서 내 페이지 순서를 제안해줘. 바꾸지는 말고.
+```
+```
+상단 배경은 Unsplash의 노트·책상 느낌 무료 사진 주소를 골라 넣어줘.
+글꼴은 Pretendard, 카드 아이콘은 Font Awesome.
+```
+```
+coolors.co 에서 파란 계열 5색 팔레트를 하나 만들어 그 색만 써줘.
+```
+
+## 원칙
+- 템플릿 파일을 그대로 쓰는 것보다 "이 페이지의 구성과 분위기로 새로 만들어줘"가
+  쉽고 라이선스 걱정이 없다. Claude Code는 주소를 읽을 수 있다.
+- 파일을 그대로 쓸 때는 라이선스를 지킨다 (CC BY = 출처 표기 유지).
+- 사이트 접속이 막히면 다른 사이트로. 목록은 2026-09 기준.

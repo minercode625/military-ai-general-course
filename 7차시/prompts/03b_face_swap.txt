@@ -1,0 +1,39 @@
+실습 2b  얼굴 바꾸기 — FaceFusion, AI 가상 인물 둘 (6분)
+
+[도구] 실습 0-2에서 설치한 FaceFusion(바탕화면 아이콘 → 검은 창 + 브라우저 127.0.0.1:7860). 공개 모델 hyperswap_1a_256(FaceFusion 기본값).
+
+[올려도 되는 사진 — 이것뿐]
+zip의 docs/가상얼굴/face_1.jpg ~ face_6.jpg. 전부 AI(sdxl-turbo)가 만든 실존하지 않는 인물이다.
+본인 · 지인 · 동료 · 연예인 · 정치인 등 실존 인물 사진은 넣지 않는다. 내 PC 안에서만 돌아도 규칙은 같다(성폭력처벌법 제14조의2 · 초상권 · 동의).
+
+[순서]  (화면 가운데 열의 번호: ① SOURCE  ② TARGET  ④ START  ⑤ OUTPUT.  왼쪽 열 ③ PROCESSORS 는 실습 2c에서)
+1. ① SOURCE 칸 클릭 → 가상얼굴 폴더에서 넣을 얼굴 face_N.jpg. 칸에 파일 이름과 사진이 보인다.
+2. ② TARGET 칸 클릭 → 바탕 사진(얼굴이 바뀔 쪽) face_M.jpg (N ≠ M). 오른쪽 PREVIEW에 바뀐 얼굴이 미리 보인다.
+3. ④ START → 2~10초 → ⑤ OUTPUT에 결과. (TERMINAL에 "processing to image succeeded in N seconds")
+4. 결과 파일은 바탕화면 FaceFusion_output 폴더에 자동 저장된다(이름은 임의의 8글자.jpg). OUTPUT 오른쪽 위 ⬇ 로 따로 저장해도 된다.
+5. 실습 3에서 그 파일도 탐지기에 넣는다(8장째).
+6. 시간이 남으면 SOURCE · TARGET을 바꿔 한 번 더. 나이 · 성별이 다른 조합이 더 어색하다.
+
+[기대 출력]
+바탕 사진의 머리 · 옷 · 배경은 그대로, 얼굴만 넣은 얼굴로 바뀐 사진 한 장. (2026-10-20 실측: M1 노트북 1.9초, Windows 2코어 CPU 12초)
+
+[기록표]
+- 바탕 face_[ ]  +  넣은 얼굴 face_[ ]
+- 어색한 곳 하나 (머리카락 경계 / 피부색 / 안경 · 귀걸이 / 조명 / 눈빛):  [              ]
+- 멀리서(휴대폰 화면 크기) 보면 속겠는가:  예 / 아니오
+- 탐지기 판정(실습 3에서):  [            ] / AI 확률 [    ]%     (실측 참고: UNCERTAIN / 53%)
+
+[안 될 때]
+| 화면에 뜬 말 | 조치 |
+|---|---|
+| OUTPUT이 비어 있고 TERMINAL에 "no face detected" | 얼굴을 못 찾았다. 가상얼굴 폴더의 다른 사진으로 |
+| START를 눌러도 아무 일이 없다 | 검은 창이 닫혔다. 바탕화면 FaceFusion으로 다시 연다 |
+| 결과 얼굴이 거의 안 바뀜 | 왼쪽 FACE SWAPPER WEIGHT 를 0.5 → 0.8 로 올리고 다시 START |
+| 1분 넘게 걸린다 | CPU만 쓰는 PC. 기다린다. 영상(실습 2c)은 video_2(더 작다)로 |
+
+[대체 — FaceFusion이 안 되는 PC]  (브라우저 공개 데모, 가입 없음. 같은 가상 얼굴만. 당일 상태는 강사가 확인)
+ https://dentro-face-swap.hf.space/   Source Image = 넣을 얼굴, Destination Image = 바탕, Submit. 예시 버튼은 실존 인물이라 누르지 않는다.
+
+[왜 Colab이 아니라 내 PC인가]
+Colab 사용 제한(FAQ "Which activities are restricted")에 "creating deepfakes" — 한국어판 "딥페이크 생성" — 이 금지 항목으로 있다(2026-10-20 확인).
+그래서 얼굴 바꾸기만은 내 PC에 설치한 공개 도구로, 가상 인물로만 한다. 결과물은 수업 끝에 지운다.
