@@ -36,7 +36,8 @@ brew install gh
 
 ### 터미널이 부담스러우면
 - Claude 데스크톱 앱(Windows·Mac): https://claude.com/download
-  같은 Team 계정으로 로그인 → 폴더를 열고 채팅처럼 쓴다. Claude Code가 들어 있다.
+  claude.ai 구독(Pro 등) 계정으로 로그인 → 폴더를 열고 채팅처럼 쓴다. Claude Code가 들어 있다.
+  수업 때 쓴 Console 계정은 터미널 `claude` → `/login` → "Anthropic Console account"로 쓴다.
 
 ## C. 오늘 만든 저장소 받아오기 (clone)
 ```

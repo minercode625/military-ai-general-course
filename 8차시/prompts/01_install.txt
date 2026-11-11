@@ -35,8 +35,9 @@ mkdir $HOME\Desktop\mysite
 cd $HOME\Desktop\mysite
 claude
 ```
-- 로그인 방식 선택 → "Claude 구독 계정(claude.ai)"
-- 브라우저가 열림 → 관리자가 초대한 이메일(Team 플랜)로 로그인 → 승인
+- 로그인 방식 선택 → "Anthropic Console account" (구독 계정 아님)
+- "Sign in with your Console account" 선택 → 브라우저가 열림
+  → 강사가 Console 조직에 초대한 이메일(Google 또는 이메일 링크)로 로그인 → 승인
 - 터미널에 `Login successful` → Enter
 - 폴더를 신뢰하겠느냐고 물으면 예
 - 브라우저가 안 열리면: 터미널에서 `c`를 눌러 주소를 복사해 브라우저에 붙인다.
@@ -61,7 +62,8 @@ claude
 | `Could not create SSL/TLS secure channel` | 구형 Windows 10. 아래 TLS 한 줄을 먼저 실행하고 설치 재시도 |
 | `winget`을 못 찾음 | Microsoft Store에서 "앱 설치 관리자" 업데이트, 또는 설치 파일 직접 다운로드: git-scm.com/downloads/win , cli.github.com |
 | 로그인 후 터미널이 그대로 | 브라우저에 보이는 코드를 터미널에 붙여 넣는다 |
-| "이 플랜에는 포함되지 않음" | 무료 계정으로 로그인했음. `/logout` 후 초대받은 이메일로 다시 |
+| "이 플랜에는 포함되지 않음" | 구독 계정 쪽으로 로그인했음. `/logout` 후 "Anthropic Console account"로 다시 |
+| 로그인 후 조직을 고르라고 나옴 | 강사가 알려 준 조직 이름을 고른다 |
 
 PATH 수동 추가 (claude를 계속 못 찾을 때, PowerShell):
 ```

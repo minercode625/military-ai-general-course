@@ -20,7 +20,7 @@
 
 03_taste_page.txt
     실습 3 — 맛보기 페이지 (2부)
-    index.html 만들고 열기 → 한 줄 고치기
+    index.html 만들고 열기 → 한 줄 고치기 → /context · /btw 한 번씩
 
 04_github_gh.txt
     실습 4 — GitHub 가입 · gh 로그인 · git 이름표 (2부)
@@ -49,6 +49,10 @@
 11_reference_sites.txt
     무료 레퍼런스 사이트 목록(템플릿·영감·이미지·글꼴·아이콘·색)과
     라이선스 메모, Claude에게 레퍼런스를 주는 문장 (4부)
+
+12_intent_md.txt
+    intent.md — 만들기 전에 적는 파일 (3부)
+    Claude와 같이 쓰는 문장, 홈페이지용 예시, 계획 모드에 건네는 문장
 
 [ 공통 규칙 ]
 - 개인 이메일 계정. 실명·소속·연락처·사진 대신 닉네임·가상 프로필.
